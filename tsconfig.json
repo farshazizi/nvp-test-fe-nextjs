@@ -19,8 +19,12 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
-    }
+      "@/*": ["*"],
+      "@/styles/*": ["styles/*"],
+      "@/components/*": ["components/*"],
+      "@/models/*": ["lib/models/*"]
+    },
+    "baseUrl": "."
   },
   "include": [
     "next-env.d.ts",
