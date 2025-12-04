@@ -14,17 +14,34 @@ export default function Create() {
   });
 
   const submit = async () => {
-    await fetch(`${API_URL}/employees`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        ...form,
-        age: Number(form.age),
-        salary: Number(form.salary),
-      }),
-    });
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${API_URL}/employees`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: token ? `Bearer ${token}` : "",
+        },
+        body: JSON.stringify({
+          ...form,
+          age: Number(form.age),
+          salary: Number(form.salary),
+        }),
+      });
 
-    router.push("/");
+      if (!res.ok) {
+        const err = await res.json();
+        console.error("API Error:", err);
+        return;
+      }
+
+      const data = await res.json();
+      console.log("Employee created:", data);
+
+      router.push("/employee");
+    } catch (error) {
+      console.error("Failed to create employee", error);
+    }
   };
 
   return (

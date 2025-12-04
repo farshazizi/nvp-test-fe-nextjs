@@ -12,12 +12,19 @@ export default function Detail() {
 
   const [form, setForm] = useState<Employee | null>(null);
 
+  const token = localStorage.getItem("token");
+
   useEffect(() => {
     let isMounted = true;
 
     const load = async () => {
       try {
-        const res = await fetch(`${API_URL}/employees/${id}`);
+        const res = await fetch(`${API_URL}/employees/${id}`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: token ? `Bearer ${token}` : "",
+          },
+        });
         const json = await res.json();
 
         if (isMounted) {
@@ -40,7 +47,10 @@ export default function Detail() {
 
     await fetch(`${API_URL}/employees/${id}`, {
       method: "PATCH",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: token ? `Bearer ${token}` : "",
+      },
       body: JSON.stringify({
         name: form.name,
         age: form.age === "" ? null : Number(form.age),
@@ -49,15 +59,18 @@ export default function Detail() {
       }),
     });
 
-    router.push("/");
+    router.push("/employee");
   };
 
   const remove = async () => {
     await fetch(`${API_URL}/employees/${id}`, {
       method: "DELETE",
+      headers: {
+        Authorization: token ? `Bearer ${token}` : "",
+      },
     });
 
-    router.push("/");
+    router.push("/employee");
   };
 
   if (!form) {
